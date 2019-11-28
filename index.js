@@ -1,45 +1,59 @@
 function js2jl(infix) {
   let ops = {
-    "*": 4,
-    "/": 4,
-    "%": 4,
-    "+": 3,
-    "-": 3,
-    cat: 3,
-    in: 3,
-    substr: 3,
-    "===": 2,
-    "!==": 2,
-    "!=": 2,
-    "==": 2,
-    "<": 2,
-    ">": 2,
-    "<=": 2,
-    ">=": 2,
-    or: 2,
-    and: 2,
-    "?": 1,
-    ":": 1,
-    filter: 1,
-    map: 1,
-    reduce: 1,
-    initial: 1,
-    method: 1,
-    arguments: 1
+    not: { precedency: 5, single: true },
+    "*": { precedency: 4 },
+    "/": { precedency: 4 },
+    "%": { precedency: 4 },
+    "+": { precedency: 3 },
+    "-": { precedency: 3 },
+    cat: { precedency: 3 },
+    in: { precedency: 3 },
+    substr: { precedency: 3 },
+    "===": { precedency: 2 },
+    "!==": { precedency: 2 },
+    "!=": { precedency: 2 },
+    "==": { precedency: 2 },
+    "<": { precedency: 2 },
+    ">": { precedency: 2 },
+    "<=": { precedency: 2 },
+    ">=": { precedency: 2 },
+    or: { precedency: 2 },
+    and: { precedency: 2 },
+    filter: { precedency: 1 },
+    map: { precedency: 1 },
+    "?": { precedency: 1 },
+    reduce: { precedency: 1 },
+    method: { precedency: 1 },
+    ":": { precedency: 1, helper: "?", key: "if" },
+    initial: { precedency: 1, helper: "reduce", key: "reduce" },
+    arguments: { precedency: 1, helper: "method", key: "method" }
   };
+
+  let helped = Object.entries(ops)
+    .filter(a => a[1].helper)
+    .map(a => a[0]);
+  let single = Object.entries(ops)
+    .filter(a => a[1].single)
+    .map(a => a[0]);
+
   let peek = a => a[a.length - 1];
   let stack = [];
   return infix
     .split(" ")
     .reduce((output, token) => {
       if (token in ops) {
-        while (peek(stack) in ops && ops[token] <= ops[peek(stack)])
+        while (
+          peek(stack) in ops &&
+          ops[token].precedency <= ops[peek(stack)].precedency
+        )
           output.push(stack.pop());
         stack.push(token);
       } else if (token === "(") {
         stack.push(token);
       } else if (token === ")") {
-        while (peek(stack) !== "(") output.push(stack.pop());
+        while (peek(stack) !== "(" && stack.length > 0) {
+          output.push(stack.pop());
+        }
         stack.pop();
       } else {
         output.push(token);
@@ -70,21 +84,27 @@ function js2jl(infix) {
           } else {
             acc.push({ var: val });
           }
-        } else if (val === ":") {
+        } else if (helped.includes(val)) {
+          // Three arguments
           let a = acc.pop();
           let b = acc.pop();
-          if (b && b["?"]) acc = [...acc, { if: [b["?"][0], b["?"][1], a] }];
-        } else if (val === "initial") {
+          if (b && b[ops[val].helper])
+            acc = [
+              ...acc,
+              {
+                [ops[val].key]: [
+                  b[ops[val].helper][0],
+                  b[ops[val].helper][1],
+                  a
+                ]
+              }
+            ];
+        } else if (single.includes(val)) {
+          // Single argument
           let a = acc.pop();
-          let b = acc.pop();
-          if (b && b["reduce"])
-            acc = [...acc, { reduce: [b["reduce"][0], b["reduce"][1], a] }];
-        } else if (val === "arguments") {
-          let a = acc.pop();
-          let b = acc.pop();
-          if (b && b["method"])
-            acc = [...acc, { method: [b["method"][0], b["method"][1], a] }];
+          acc = [...acc, { [val]: a }];
         } else {
+          // Two arguments
           let a = acc.pop();
           let b = acc.pop();
           acc = [...acc, { [val]: [b, a] }];
