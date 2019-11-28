@@ -48,3 +48,10 @@ Currently supported operators (ordered by precedency):
 *  `?` followed by `:`, `filter`, `map`, `reduce` followed by `initial`, `method` followed by `arguments`.
 
 Only `if`, `reduce` and `method` are currently supporting three arguments. The rest uses only 2. Arrays, objects, and strings (but only strings that don't contain any spaces for now) are being parsed; the rest is treated as variables.
+
+Important:
+1. Operators and operands **must** be separated by a space.
+2. to make `{"var": ""}` use two spaces one after another.
+
+
+[Here's a sandbox](https://codesandbox.io/embed/wandering-lake-cil4d?fontsize=14&hidenavigation=1) with this project running
