@@ -47,7 +47,9 @@ Currently supported operators (ordered by precedency):
 *  `===`, `!==`, `==`, `!=`, `<`, `>`, `<=`, `>=`, `or`, `and`;
 *  `?` followed by `:`, `filter`, `map`, `reduce` followed by `initial`, `method` followed by `arguments`.
 
-Only `if`, `reduce` and `method` are currently supporting three arguments. The rest uses only 2. Arrays, objects, and strings (but only strings that don't contain any spaces for now) are being parsed; the rest is treated as variables.
+Only `if`, `reduce` and `method` are currently supporting three arguments; the rest uses only two.
+
+Arrays, objects, and strings are being parsed (but only strings that don't contain any spaces for now); anything else is treated as a variable.
 
 Important:
 1. Operators and operands **must** be separated by a space.
