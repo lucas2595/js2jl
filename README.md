@@ -15,27 +15,28 @@ yarn add js2jl
 
 Usage:
 
-```
+```javascript
 import js2jl from 'js2jl'
 
 const infix = "A + B - 2"
 
 const logic = js2jl(infix) 
-//{
-//    "-": [
-//        {
-//            "+": [
-//                {
-//                    "var": "A"
-//                },
-//                {
-//                    "var": "B"
-//                }
-//            ]
-//        },
-//        2
-//    ]
-//}
+//  logic contains:
+//  {
+//      "-": [
+//          {
+//              "+": [
+//                  {
+//                      "var": "A"
+//                  },
+//                  {
+//                      "var": "B"
+//                  }
+//              ]
+//          },
+//          2
+//      ]
+//  }
 
 ```
 
