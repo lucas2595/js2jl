@@ -1,0 +1,9 @@
+{
+  "name": "js2jl",
+  "version": "0.0.1",
+  "description": "Converts plain javascript in infix notation to json-logic notation",
+  "main": "index.js",
+  "repository": "git@github.com:lucas2595/js2jl.git",
+  "author": "Lucas Pereira Luiz",
+  "license": "MIT"
+}
